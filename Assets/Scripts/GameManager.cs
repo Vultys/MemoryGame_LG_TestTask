@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Transform _container;
 
+	[SerializeField] private float _rememberingDelay = 5f;
+
     private List<Sprite> _spritePairs;
 
     private List<Card> _cardList = new List<Card>();
@@ -17,6 +20,7 @@ public class GameManager : MonoBehaviour
     {
         PrepareSprites();
         CreateCards();
+		StartCoroutine(RememberingCards());
     }
 
     private void PrepareSprites()
@@ -51,6 +55,22 @@ public class GameManager : MonoBehaviour
 			Card card = Instantiate(_cardPrefab, _container);
 			_cardList.Add(card);
 			card.SetOpenedIconSprite(sprite);
+			card.Show();
+		}
+	}
+
+	private IEnumerator RememberingCards()
+	{
+		foreach (var card in _cardList)
+		{
+			card.Show();
+		}
+		
+		yield return new WaitForSeconds(_rememberingDelay);
+
+		foreach (var card in _cardList)
+		{
+			card.Hide();
 		}
 	}
 }

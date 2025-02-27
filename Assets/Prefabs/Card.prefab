@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _openedIconImage: {fileID: 6646751255199811384}
+  _hiddenIconImage: {fileID: 5852824968652620266}
 --- !u!1 &5059097382100545300
 GameObject:
   m_ObjectHideFlags: 0

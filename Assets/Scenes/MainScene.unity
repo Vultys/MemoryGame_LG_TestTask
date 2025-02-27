@@ -353,6 +353,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 54e1deb4df6bf3e4ab57aee4b2f3871a, type: 3}
   _cardPrefab: {fileID: 8833997705810816613, guid: ffe7dc2043c479641a99955d26bd4008, type: 3}
   _container: {fileID: 1401395008}
+  _rememberingDelay: 5
 --- !u!4 &1040580817
 Transform:
   m_ObjectHideFlags: 0
