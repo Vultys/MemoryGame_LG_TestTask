@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -99,7 +100,11 @@ public class GameManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(_checkDelay);
 
-		if (_firstSelected.OpenedIconSprite != _secondSelected.OpenedIconSprite)
+		if (_firstSelected.OpenedIconSprite == _secondSelected.OpenedIconSprite)
+		{
+			DestroyCardsAfterMatch();
+		}
+		else
 		{
 			_firstSelected.Hide();
 			_secondSelected.Hide();
@@ -112,5 +117,13 @@ public class GameManager : MonoBehaviour
 	{
 		_firstSelected = null;
 		_secondSelected = null;
+	}
+
+	private void DestroyCardsAfterMatch()
+	{
+		_firstSelected.OnClick -= SetSelectedCard;
+		_secondSelected.OnClick -= SetSelectedCard;
+		_firstSelected.Disable();
+		_secondSelected.Disable();
 	}
 }

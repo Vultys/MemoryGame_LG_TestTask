@@ -37,6 +37,12 @@ public class Card : MonoBehaviour
        _isSelected = false;
     }
 
+    public void Disable()
+    {
+        _hiddenIconImage.gameObject.SetActive(false);
+       _openedIconImage.gameObject.SetActive(false);
+    }
+
     public void OnCardClick()
     {
         OnClick?.Invoke(this);
