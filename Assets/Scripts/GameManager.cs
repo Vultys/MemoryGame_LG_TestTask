@@ -12,9 +12,13 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField] private float _rememberingDelay = 5f;
 
+	[SerializeField] private float _checkDelay = 1f;
+
     private List<Sprite> _spritePairs;
 
     private List<Card> _cardList = new List<Card>();
+
+	private Card _firstSelected, _secondSelected;
 
     private void Start()
     {
@@ -55,7 +59,7 @@ public class GameManager : MonoBehaviour
 			Card card = Instantiate(_cardPrefab, _container);
 			_cardList.Add(card);
 			card.SetOpenedIconSprite(sprite);
-			card.Show();
+			card.OnClick += SetSelectedCard;
 		}
 	}
 
@@ -72,5 +76,41 @@ public class GameManager : MonoBehaviour
 		{
 			card.Hide();
 		}
+	}
+
+	private void SetSelectedCard(Card card)
+	{
+		if (card.IsSelected) return;
+
+		if (_firstSelected == null)
+		{
+			card.Show();
+			_firstSelected = card;
+		}
+		else if (_secondSelected == null)
+		{
+			card.Show();
+			_secondSelected = card;
+			StartCoroutine(CheckMatching());
+		}
+	}
+
+	private IEnumerator CheckMatching()
+	{
+		yield return new WaitForSeconds(_checkDelay);
+
+		if (_firstSelected.OpenedIconSprite != _secondSelected.OpenedIconSprite)
+		{
+			_firstSelected.Hide();
+			_secondSelected.Hide();
+		}
+
+		ResetSelectedCards();
+	}
+
+	private void ResetSelectedCards()
+	{
+		_firstSelected = null;
+		_secondSelected = null;
 	}
 }
