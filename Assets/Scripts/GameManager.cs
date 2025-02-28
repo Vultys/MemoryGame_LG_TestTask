@@ -21,12 +21,29 @@ public class GameManager : MonoBehaviour
 
 	private Card _firstSelected, _secondSelected;
 
+	private int _matchCounts;
+
     private void Start()
     {
-        PrepareSprites();
-        CreateCards();
-		StartCoroutine(RememberingCards());
+        InitGame(true);
     }
+
+	private void InitGame(bool isFirstStart)
+	{
+		if (isFirstStart)
+		{
+			PrepareSprites();
+			ShuffleSprites(_spritePairs);
+			CreateCards();
+		}
+		else
+		{
+			ShuffleSprites(_spritePairs);
+			AdjustCardListAfterShuffle();
+		}
+
+		StartCoroutine(RememberingCards());
+	}
 
     private void PrepareSprites()
 	{
@@ -37,8 +54,6 @@ public class GameManager : MonoBehaviour
             _spritePairs.Add(face);
             _spritePairs.Add(face);
         }
-
-		ShuffleSprites(_spritePairs);
 	}
 
     private void ShuffleSprites(List<Sprite> spritesList)
@@ -60,7 +75,14 @@ public class GameManager : MonoBehaviour
 			Card card = Instantiate(_cardPrefab, _container);
 			_cardList.Add(card);
 			card.SetOpenedIconSprite(sprite);
-			card.OnClick += SetSelectedCard;
+		}
+	}
+
+	private void AdjustCardListAfterShuffle()
+	{
+		for (int i = 0; i < _cardList.Count; i++)
+		{
+			_cardList[i].SetOpenedIconSprite(_spritePairs[i]);
 		}
 	}
 
@@ -75,6 +97,7 @@ public class GameManager : MonoBehaviour
 
 		foreach (var card in _cardList)
 		{
+			card.OnClick += SetSelectedCard;
 			card.Hide();
 		}
 	}
@@ -103,6 +126,11 @@ public class GameManager : MonoBehaviour
 		if (_firstSelected.OpenedIconSprite == _secondSelected.OpenedIconSprite)
 		{
 			DestroyCardsAfterMatch();
+			if(++_matchCounts == _spritePairs.Count / 2)
+			{
+				InitGame(false);
+				_matchCounts = 0;
+			}
 		}
 		else
 		{
