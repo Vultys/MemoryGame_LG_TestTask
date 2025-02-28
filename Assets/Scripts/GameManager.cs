@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField] private float _rememberingDelay = 5f;
 
+	[SerializeField] private TMP_Text _matchCountText;
+
 	[SerializeField] private float _checkDelay = 1f;
 
     private List<Sprite> _spritePairs;
@@ -21,7 +23,9 @@ public class GameManager : MonoBehaviour
 
 	private Card _firstSelected, _secondSelected;
 
-	private int _matchCounts;
+	private int _matchCount;
+
+	private int _totalMatchCount;
 
     private void Start()
     {
@@ -125,11 +129,12 @@ public class GameManager : MonoBehaviour
 
 		if (_firstSelected.OpenedIconSprite == _secondSelected.OpenedIconSprite)
 		{
+			_matchCountText.text = $"Score: {++_totalMatchCount}";
 			DestroyCardsAfterMatch();
-			if(++_matchCounts == _spritePairs.Count / 2)
+			if(++_matchCount == _spritePairs.Count / 2)
 			{
 				InitGame(false);
-				_matchCounts = 0;
+				_matchCount = 0;
 			}
 		}
 		else
