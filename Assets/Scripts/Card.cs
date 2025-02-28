@@ -1,13 +1,16 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class Card : MonoBehaviour
-{
+{    
     public event Action<Card> OnClick;
 
     [SerializeField] private Image _openedIconImage;
 
     [SerializeField] private Image _hiddenIconImage;
+
+    [SerializeField] private Animator _animator;
 
     private bool _isSelected;
 
@@ -17,6 +20,12 @@ public class Card : MonoBehaviour
 
     public Sprite OpenedIconSprite => _openedIconSprite;
 
+    private readonly int _turnBackAnimationTrigger = Animator.StringToHash("turnBack");
+
+    private readonly int _turnFrontAnimationTrigger = Animator.StringToHash("turnFront");
+
+    private readonly int _hiddenAnimationTrigger = Animator.StringToHash("hidden");
+
     public void SetOpenedIconSprite(Sprite sprite)
     {
         _openedIconSprite = sprite;
@@ -25,22 +34,20 @@ public class Card : MonoBehaviour
 
     public void Show()
     {
-        _openedIconImage.gameObject.SetActive(true);
-        _hiddenIconImage.gameObject.SetActive(false);
+        _animator.SetTrigger(_turnFrontAnimationTrigger);
         _isSelected = true;
     }
 
     public void Hide()
     {
-       _hiddenIconImage.gameObject.SetActive(true);
-       _openedIconImage.gameObject.SetActive(false);
+        _animator.SetTrigger(_turnBackAnimationTrigger);
        _isSelected = false;
     }
 
     public void Disable()
     {
-        _hiddenIconImage.gameObject.SetActive(false);
-       _openedIconImage.gameObject.SetActive(false);
+        _animator.SetTrigger(_hiddenAnimationTrigger);       
+        _isSelected = false;
     }
 
     public void OnCardClick()

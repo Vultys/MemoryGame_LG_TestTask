@@ -130,11 +130,14 @@ public class GameManager : MonoBehaviour
 		if (_firstSelected.OpenedIconSprite == _secondSelected.OpenedIconSprite)
 		{
 			_matchCountText.text = $"Score: {++_totalMatchCount}";
-			DestroyCardsAfterMatch();
 			if(++_matchCount == _spritePairs.Count / 2)
 			{
 				InitGame(false);
 				_matchCount = 0;
+			}
+			else
+			{
+				DestroyCardsAfterMatch();
 			}
 		}
 		else
