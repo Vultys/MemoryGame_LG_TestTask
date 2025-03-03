@@ -5,15 +5,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+	[SerializeField] private GameSettings _gameSettings;
+
     [SerializeField] private Card _cardPrefab;
 
     [SerializeField] private Transform _container;
 
-	[SerializeField] private float _rememberingDelay = 5f;
-
 	[SerializeField] private TMP_Text _matchCountText;
-
-	[SerializeField] private float _checkDelay = 1f;
 
 	[SerializeField] private ImageLoader _imageLoader;
 
@@ -26,8 +24,6 @@ public class GameManager : MonoBehaviour
 	private int _matchCount;
 
 	private int _totalMatchCount;
-
-	private readonly string _cardFacesUrl = "https://drive.usercontent.google.com/download?id=1bSpNwfDG2jp7luEf0GYXyxcAZEsftOdv&export=download&authuser=0&confirm=t&uuid=b1d33e76-2415-432f-a413-4a8f6047733d&at=AEz70l7NNKaOKeuD-IVAx9c1qixW:1740990691029";
 
     private void Start()
     {
@@ -50,7 +46,7 @@ public class GameManager : MonoBehaviour
 
 	private void LoadSprites()
 	{
-		_imageLoader.LoadImages(_cardFacesUrl, PrepareSprites);
+		_imageLoader.LoadImages(_gameSettings.cardFacesJsonUrl, PrepareSprites);
 	}
 
     private void PrepareSprites(List<Sprite> sprites)
@@ -105,7 +101,7 @@ public class GameManager : MonoBehaviour
 			card.Show();
 		}
 		
-		yield return new WaitForSeconds(_rememberingDelay);
+		yield return new WaitForSeconds(_gameSettings.rememberingDelay);
 
 		foreach (var card in _cardList)
 		{
@@ -133,7 +129,7 @@ public class GameManager : MonoBehaviour
 
 	private IEnumerator CheckMatching()
 	{
-		yield return new WaitForSeconds(_checkDelay);
+		yield return new WaitForSeconds(_gameSettings.checkDelay);
 
 		if (_firstSelected.OpenedIconSprite == _secondSelected.OpenedIconSprite)
 		{

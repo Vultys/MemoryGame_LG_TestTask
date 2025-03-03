@@ -392,11 +392,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb2fe7187cb8098439d3b9480d461522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameSettings: {fileID: 11400000, guid: d07be4850c2561d41add73a420c2837f, type: 2}
   _cardPrefab: {fileID: 8833997705810816613, guid: ffe7dc2043c479641a99955d26bd4008, type: 3}
   _container: {fileID: 1401395008}
-  _rememberingDelay: 5
   _matchCountText: {fileID: 2078975839}
-  _checkDelay: 1
   _imageLoader: {fileID: 194619182}
 --- !u!4 &1040580817
 Transform:
@@ -700,7 +699,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.3
+  m_fontSize: 31.1
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
