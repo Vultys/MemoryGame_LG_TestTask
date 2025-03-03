@@ -6,7 +6,12 @@ using UnityEngine.Networking;
 
 public class ImageLoader
 {
-    private List<Sprite> _spritesCollection = new List<Sprite>();
+    private readonly List<Sprite> _spritesCollection = new List<Sprite>();
+
+    public void LoadImages(string jsonUrl, Action<List<Sprite>> onComplete = null)
+    {
+        CoroutineRunner.Instance.StartCoroutine(LoadJson(jsonUrl, onComplete));
+    }
 
     public IEnumerator LoadJson(string jsonUrl, Action<List<Sprite>> onComplete = null)
     {
@@ -17,7 +22,7 @@ public class ImageLoader
             if (request.result == UnityWebRequest.Result.Success)
             {
                 ImageList imageList = JsonUtility.FromJson<ImageList>(request.downloadHandler.text);
-                CoroutineRunner.Instance.StartCoroutine(LoadImages(imageList.images, onComplete));
+                yield return LoadImagesFromUrls(imageList.images, onComplete);
             }
             else
             {
@@ -26,7 +31,7 @@ public class ImageLoader
         }
     }
 
-    private IEnumerator LoadImages(List<ImageData> images, Action<List<Sprite>> onComplete = null)
+    private IEnumerator LoadImagesFromUrls(List<ImageData> images, Action<List<Sprite>> onComplete = null)
     {
         foreach (var imageData in images)
         {
@@ -47,11 +52,6 @@ public class ImageLoader
         }
 
         onComplete?.Invoke(_spritesCollection);
-    }
-
-    public void LoadImages(string jsonUrl, Action<List<Sprite>> onComplete = null)
-    {
-        CoroutineRunner.Instance.StartCoroutine(LoadJson(jsonUrl, onComplete));
     }
 }
 
