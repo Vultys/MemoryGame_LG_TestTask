@@ -28,24 +28,10 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
 		_imageLoader = new ImageLoader();
-        InitGame(true);
+        InitGame();
     }
 
-	private void InitGame(bool isFirstStart)
-	{
-		if (isFirstStart)
-		{
-			LoadSprites();
-		}
-		else
-		{
-			ShuffleSprites(_spritePairs);
-			AdjustCardListAfterShuffle();
-			CoroutineRunner.Instance.StartCoroutine(RememberingCards());
-		}
-	}
-
-	private void LoadSprites()
+	private void InitGame()
 	{
 		_imageLoader.LoadImages(_gameSettings.cardFacesJsonUrl, PrepareSprites);
 	}
@@ -137,7 +123,7 @@ public class GameManager : MonoBehaviour
 			_matchCountText.text = $"Score: {++_totalMatchCount}";
 			if(++_matchCount == _spritePairs.Count / 2)
 			{
-				InitGame(false);
+				RestartGame();
 				_matchCount = 0;
 			}
 			else
@@ -152,6 +138,13 @@ public class GameManager : MonoBehaviour
 		}
 
 		ResetSelectedCards();
+	}
+
+	private void RestartGame()
+	{
+		ShuffleSprites(_spritePairs);
+		AdjustCardListAfterShuffle();
+		CoroutineRunner.Instance.StartCoroutine(RememberingCards());
 	}
 
 	private void ResetSelectedCards()
