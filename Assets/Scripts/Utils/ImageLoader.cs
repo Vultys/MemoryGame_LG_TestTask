@@ -4,11 +4,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ImageLoader : MonoBehaviour
+/// <summary>
+/// Loads images from json
+/// </summary>
+public class ImageLoader
 {
-    private List<Sprite> _spritesCollection = new List<Sprite>();
+    private readonly List<Sprite> _spritesCollection = new List<Sprite>();
 
-    IEnumerator LoadJson(string jsonUrl, Action<List<Sprite>> onComplete = null)
+    /// <summary>
+    /// Loads images from json
+    /// </summary>
+    /// <param name="jsonUrl"> Url to json file </param>
+    /// <param name="onComplete"> Callback after loading </param>
+    public void LoadImages(string jsonUrl, Action<List<Sprite>> onComplete = null)
+    {
+        CoroutineRunner.Instance.StartCoroutine(LoadJson(jsonUrl, onComplete));
+    }
+
+    /// <summary>
+    /// Loads images urls from json
+    /// </summary>
+    /// <param name="jsonUrl"> Url to json file </param>
+    /// <param name="onComplete"> Callback after loading </param>
+    private IEnumerator LoadJson(string jsonUrl, Action<List<Sprite>> onComplete = null)
     {
         using (UnityWebRequest request = UnityWebRequest.Get(jsonUrl))
         {
@@ -17,7 +35,7 @@ public class ImageLoader : MonoBehaviour
             if (request.result == UnityWebRequest.Result.Success)
             {
                 ImageList imageList = JsonUtility.FromJson<ImageList>(request.downloadHandler.text);
-                StartCoroutine(LoadImages(imageList.images, onComplete));
+                yield return LoadImagesFromUrls(imageList.images, onComplete);
             }
             else
             {
@@ -26,7 +44,12 @@ public class ImageLoader : MonoBehaviour
         }
     }
 
-    IEnumerator LoadImages(List<ImageData> images, Action<List<Sprite>> onComplete = null)
+    /// <summary>
+    /// Loads images from urls
+    /// </summary>
+    /// <param name="images"> Images urls </param>
+    /// <param name="onComplete"> Callback after loading </param>
+    private IEnumerator LoadImagesFromUrls(List<ImageData> images, Action<List<Sprite>> onComplete = null)
     {
         foreach (var imageData in images)
         {
@@ -48,19 +71,20 @@ public class ImageLoader : MonoBehaviour
 
         onComplete?.Invoke(_spritesCollection);
     }
-
-    public void LoadImages(string jsonUrl, Action<List<Sprite>> onComplete = null)
-    {
-        StartCoroutine(LoadJson(jsonUrl, onComplete));
-    }
 }
 
+/// <summary>
+/// Image data
+/// </summary>
 [Serializable]
 public class ImageData
 {
     public string url;
 }
 
+/// <summary>
+/// List of images urls
+/// </summary>
 [Serializable]
 public class ImageList
 {

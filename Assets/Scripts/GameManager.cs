@@ -1,173 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Game manager
+/// </summary>
 public class GameManager : MonoBehaviour
 {
+	[SerializeField] private GameSettings _gameSettings;
     [SerializeField] private Card _cardPrefab;
-
     [SerializeField] private Transform _container;
+    [SerializeField] private TMP_Text _matchCountText;
 
-	[SerializeField] private float _rememberingDelay = 5f;
+    private CardMatcher _cardMatcher;
+    private CardDeck _cardDeck;
+    private int _matchCount;
 
-	[SerializeField] private TMP_Text _matchCountText;
-
-	[SerializeField] private float _checkDelay = 1f;
-
-	[SerializeField] private ImageLoader _imageLoader;
-
-    private List<Sprite> _spritePairs;
-
-    private List<Card> _cardList = new List<Card>();
-
-	private Card _firstSelected, _secondSelected;
-
-	private int _matchCount;
-
-	private int _totalMatchCount;
-
-	private readonly string _cardFacesUrl = "https://drive.usercontent.google.com/download?id=1bSpNwfDG2jp7luEf0GYXyxcAZEsftOdv&export=download&authuser=0&confirm=t&uuid=b1d33e76-2415-432f-a413-4a8f6047733d&at=AEz70l7NNKaOKeuD-IVAx9c1qixW:1740990691029";
-
+	/// <summary>
+	/// Start is called before the first frame update
+	/// </summary>
     private void Start()
     {
-        InitGame(true);
+        _cardDeck = new CardDeck(_gameSettings, _cardPrefab, _container, AssignOnClickEvent);
+        _cardMatcher = new CardMatcher(_gameSettings.checkDelay, OnMatch, RestartGame);
+        _cardDeck.LoadAndCreateCards();
     }
 
-	private void InitGame(bool isFirstStart)
-	{
-		if (isFirstStart)
-		{
-			LoadSprites();
-		}
-		else
-		{
-			ShuffleSprites(_spritePairs);
-			AdjustCardListAfterShuffle();
-			StartCoroutine(RememberingCards());
-		}
-	}
+	/// <summary>
+	/// Assign OnClick event to cards after loading
+	/// </summary>
+    private void AssignOnClickEvent()
+    {
+		_cardMatcher.AssignOnClickEvent(_cardDeck.Cards);
+    }
 
-	private void LoadSprites()
-	{
-		_imageLoader.LoadImages(_cardFacesUrl, PrepareSprites);
-	}
+	/// <summary>
+	/// Update match count text
+	/// </summary>
+    private void OnMatch()
+    {
+        _matchCountText.text = $"Score: {++_matchCount}";
+    }
 
-    private void PrepareSprites(List<Sprite> sprites)
-	{
-		_spritePairs = new List<Sprite>(sprites.Count * 2);
-
-		foreach (var face in sprites)
-        {
-            _spritePairs.Add(face);
-            _spritePairs.Add(face);
-        }
-
-		ShuffleSprites(_spritePairs);
-		CreateCards();
-		StartCoroutine(RememberingCards());
-	}
-
-    private void ShuffleSprites(List<Sprite> spritesList)
-	{
-		for (int i = spritesList.Count - 1; i > 0; i--)
-		{
-			int randomIndex = Random.Range(0, i + 1);
-
-			Sprite temp = spritesList[i];
-			spritesList[i] = spritesList[randomIndex];
-			spritesList[randomIndex] = temp;
-		}
-	}
-
-    private void CreateCards()
-	{
-		foreach (var sprite in _spritePairs)
-        {
-			Card card = Instantiate(_cardPrefab, _container);
-			_cardList.Add(card);
-			card.SetOpenedIconSprite(sprite);
-		}
-	}
-
-	private void AdjustCardListAfterShuffle()
-	{
-		for (int i = 0; i < _cardList.Count; i++)
-		{
-			_cardList[i].SetOpenedIconSprite(_spritePairs[i]);
-		}
-	}
-
-	private IEnumerator RememberingCards()
-	{
-		foreach (var card in _cardList)
-		{
-			card.Show();
-		}
-		
-		yield return new WaitForSeconds(_rememberingDelay);
-
-		foreach (var card in _cardList)
-		{
-			card.OnClick += SetSelectedCard;
-			card.Hide();
-		}
-	}
-
-	private void SetSelectedCard(Card card)
-	{
-		if (card.IsSelected) return;
-
-		if (_firstSelected == null)
-		{
-			card.Show();
-			_firstSelected = card;
-		}
-		else if (_secondSelected == null)
-		{
-			card.Show();
-			_secondSelected = card;
-			StartCoroutine(CheckMatching());
-		}
-	}
-
-	private IEnumerator CheckMatching()
-	{
-		yield return new WaitForSeconds(_checkDelay);
-
-		if (_firstSelected.OpenedIconSprite == _secondSelected.OpenedIconSprite)
-		{
-			_matchCountText.text = $"Score: {++_totalMatchCount}";
-			if(++_matchCount == _spritePairs.Count / 2)
-			{
-				InitGame(false);
-				_matchCount = 0;
-			}
-			else
-			{
-				DestroyCardsAfterMatch();
-			}
-		}
-		else
-		{
-			_firstSelected.Hide();
-			_secondSelected.Hide();
-		}
-
-		ResetSelectedCards();
-	}
-
-	private void ResetSelectedCards()
-	{
-		_firstSelected = null;
-		_secondSelected = null;
-	}
-
-	private void DestroyCardsAfterMatch()
-	{
-		_firstSelected.OnClick -= SetSelectedCard;
-		_secondSelected.OnClick -= SetSelectedCard;
-		_firstSelected.Disable();
-		_secondSelected.Disable();
-	}
+	/// <summary>
+	/// Restarts the game
+	/// </summary>
+    private void RestartGame()
+    {
+		_cardDeck.ReshuffleCards();
+    }
 }
