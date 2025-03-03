@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Sprite[] _cardFaces;
-
     [SerializeField] private Card _cardPrefab;
 
     [SerializeField] private Transform _container;
@@ -16,6 +14,8 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private TMP_Text _matchCountText;
 
 	[SerializeField] private float _checkDelay = 1f;
+
+	[SerializeField] private ImageLoader _imageLoader;
 
     private List<Sprite> _spritePairs;
 
@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
 
 	private int _totalMatchCount;
 
+	private readonly string _cardFacesUrl = "https://drive.usercontent.google.com/download?id=1bSpNwfDG2jp7luEf0GYXyxcAZEsftOdv&export=download&authuser=0&confirm=t&uuid=b1d33e76-2415-432f-a413-4a8f6047733d&at=AEz70l7NNKaOKeuD-IVAx9c1qixW:1740990691029";
+
     private void Start()
     {
         InitGame(true);
@@ -36,28 +38,34 @@ public class GameManager : MonoBehaviour
 	{
 		if (isFirstStart)
 		{
-			PrepareSprites();
-			ShuffleSprites(_spritePairs);
-			CreateCards();
+			LoadSprites();
 		}
 		else
 		{
 			ShuffleSprites(_spritePairs);
 			AdjustCardListAfterShuffle();
+			StartCoroutine(RememberingCards());
 		}
-
-		StartCoroutine(RememberingCards());
 	}
 
-    private void PrepareSprites()
+	private void LoadSprites()
 	{
-		_spritePairs = new List<Sprite>(_cardFaces.Length * 2);
+		_imageLoader.LoadImages(_cardFacesUrl, PrepareSprites);
+	}
 
-		foreach (var face in _cardFaces)
+    private void PrepareSprites(List<Sprite> sprites)
+	{
+		_spritePairs = new List<Sprite>(sprites.Count * 2);
+
+		foreach (var face in sprites)
         {
             _spritePairs.Add(face);
             _spritePairs.Add(face);
         }
+
+		ShuffleSprites(_spritePairs);
+		CreateCards();
+		StartCoroutine(RememberingCards());
 	}
 
     private void ShuffleSprites(List<Sprite> spritesList)
