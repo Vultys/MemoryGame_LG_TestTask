@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ImageLoader : MonoBehaviour
+public class ImageLoader
 {
     private List<Sprite> _spritesCollection = new List<Sprite>();
 
-    IEnumerator LoadJson(string jsonUrl, Action<List<Sprite>> onComplete = null)
+    public IEnumerator LoadJson(string jsonUrl, Action<List<Sprite>> onComplete = null)
     {
         using (UnityWebRequest request = UnityWebRequest.Get(jsonUrl))
         {
@@ -17,7 +17,7 @@ public class ImageLoader : MonoBehaviour
             if (request.result == UnityWebRequest.Result.Success)
             {
                 ImageList imageList = JsonUtility.FromJson<ImageList>(request.downloadHandler.text);
-                StartCoroutine(LoadImages(imageList.images, onComplete));
+                CoroutineRunner.Instance.StartCoroutine(LoadImages(imageList.images, onComplete));
             }
             else
             {
@@ -26,7 +26,7 @@ public class ImageLoader : MonoBehaviour
         }
     }
 
-    IEnumerator LoadImages(List<ImageData> images, Action<List<Sprite>> onComplete = null)
+    private IEnumerator LoadImages(List<ImageData> images, Action<List<Sprite>> onComplete = null)
     {
         foreach (var imageData in images)
         {
@@ -51,7 +51,7 @@ public class ImageLoader : MonoBehaviour
 
     public void LoadImages(string jsonUrl, Action<List<Sprite>> onComplete = null)
     {
-        StartCoroutine(LoadJson(jsonUrl, onComplete));
+        CoroutineRunner.Instance.StartCoroutine(LoadJson(jsonUrl, onComplete));
     }
 }
 

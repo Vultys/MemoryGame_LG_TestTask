@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField] private TMP_Text _matchCountText;
 
-	[SerializeField] private ImageLoader _imageLoader;
+	private ImageLoader _imageLoader;
 
     private List<Sprite> _spritePairs;
 
@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+		_imageLoader = new ImageLoader();
         InitGame(true);
     }
 
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
 		{
 			ShuffleSprites(_spritePairs);
 			AdjustCardListAfterShuffle();
-			StartCoroutine(RememberingCards());
+			CoroutineRunner.Instance.StartCoroutine(RememberingCards());
 		}
 	}
 
@@ -61,7 +62,7 @@ public class GameManager : MonoBehaviour
 
 		ShuffleSprites(_spritePairs);
 		CreateCards();
-		StartCoroutine(RememberingCards());
+		CoroutineRunner.Instance.StartCoroutine(RememberingCards());
 	}
 
     private void ShuffleSprites(List<Sprite> spritesList)
@@ -123,7 +124,7 @@ public class GameManager : MonoBehaviour
 		{
 			card.Show();
 			_secondSelected = card;
-			StartCoroutine(CheckMatching());
+			CoroutineRunner.Instance.StartCoroutine(CheckMatching());
 		}
 	}
 
