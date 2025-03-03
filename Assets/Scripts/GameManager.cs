@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Card _cardPrefab;
     [SerializeField] private Transform _container;
     [SerializeField] private TMP_Text _matchCountText;
+	[SerializeField] private GameObject _loadingScreen;
 
     private CardMatcher _cardMatcher;
     private CardDeck _cardDeck;
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
 	/// </summary>
     private void AssignOnClickEvent()
     {
+		_loadingScreen.SetActive(false);
 		_cardMatcher.AssignOnClickEvent(_cardDeck.Cards);
     }
 
