@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Checking cards for matching
+/// </summary>
 public class CardMatcher
 {
     private readonly float _checkDelay;
@@ -13,6 +16,12 @@ public class CardMatcher
     private int _matchCount;
     private int _pairsCount;
 
+    /// <summary>
+    /// Creates a matcher
+    /// </summary>
+    /// <param name="checkDelay"> Delay between checking cards </param>
+    /// <param name="onMatch"> Callback after match </param>
+    /// <param name="onGameRestart"> Callback after game restart </param>
     public CardMatcher(float checkDelay, Action onMatch, Action onGameRestart)
     {
         _checkDelay = checkDelay;
@@ -20,6 +29,10 @@ public class CardMatcher
         _onGameRestart = onGameRestart;
     }
 
+    /// <summary>
+    /// Assigns OnClick event to cards
+    /// </summary>
+    /// <param name="cards"> Cards to assign event to </param>
     public void AssignOnClickEvent(IReadOnlyList<Card> cards)
     {
         foreach (var card in cards)
@@ -30,6 +43,10 @@ public class CardMatcher
         _pairsCount = cards.Count / 2;
     }
 
+    /// <summary>
+    /// Sets selected card
+    /// </summary>
+    /// <param name="card"> Card to set </param>
     private void SetSelectedCard(Card card)
     {
         if (card.IsSelected) return;
@@ -47,6 +64,10 @@ public class CardMatcher
         }
     }
 
+    /// <summary>
+    /// Checks matching
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator CheckMatching()
     {
         yield return new WaitForSeconds(_checkDelay);
@@ -74,12 +95,18 @@ public class CardMatcher
         ResetSelectedCards();
     }
 
+    /// <summary>
+    /// Resets selected cards
+    /// </summary>
     private void ResetSelectedCards()
     {
         _firstSelected = null;
         _secondSelected = null;
     }
 
+    /// <summary>
+    /// Disables cards after match
+    /// </summary>
     private void DisableCardsAfterMatch()
 	{
 		_firstSelected.OnClick -= SetSelectedCard;

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Coroutine runner
+/// </summary>
 public class CoroutineRunner : MonoBehaviour
 {
     private static string _name = "CoroutineRunner";

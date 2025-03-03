@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Game manager
+/// </summary>
 public class GameManager : MonoBehaviour
 {
 	[SerializeField] private GameSettings _gameSettings;
@@ -14,6 +15,9 @@ public class GameManager : MonoBehaviour
     private CardDeck _cardDeck;
     private int _matchCount;
 
+	/// <summary>
+	/// Start is called before the first frame update
+	/// </summary>
     private void Start()
     {
         _cardDeck = new CardDeck(_gameSettings, _cardPrefab, _container, AssignOnClickEvent);
@@ -21,16 +25,25 @@ public class GameManager : MonoBehaviour
         _cardDeck.LoadAndCreateCards();
     }
 
+	/// <summary>
+	/// Assign OnClick event to cards after loading
+	/// </summary>
     private void AssignOnClickEvent()
     {
 		_cardMatcher.AssignOnClickEvent(_cardDeck.Cards);
     }
 
+	/// <summary>
+	/// Update match count text
+	/// </summary>
     private void OnMatch()
     {
         _matchCountText.text = $"Score: {++_matchCount}";
     }
 
+	/// <summary>
+	/// Restarts the game
+	/// </summary>
     private void RestartGame()
     {
 		_cardDeck.ReshuffleCards();

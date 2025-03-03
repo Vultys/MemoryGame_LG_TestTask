@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represents a deck of cards
+/// </summary>
 public class CardDeck
 {
     private readonly GameSettings _gameSettings;
@@ -21,6 +24,13 @@ public class CardDeck
 
     public IReadOnlyList<Card> Cards => _cards;
 
+    /// <summary>
+    /// Creates a deck of cards
+    /// </summary>
+    /// <param name="gameSettings"> Game settings </param>
+    /// <param name="cardPrefab"> Card prefab </param>
+    /// <param name="container"> Container to place cards </param>
+    /// <param name="onDeckEnabled"> Callback after deck is enabled </param>
     public CardDeck(GameSettings gameSettings, Card cardPrefab, Transform container, Action onDeckEnabled)
     {
         _imageLoader = new ImageLoader();
@@ -30,11 +40,17 @@ public class CardDeck
         _onDeckEnabled = onDeckEnabled;
     }
 
+    /// <summary>
+    /// Loads and creates cards
+    /// </summary>
     public void LoadAndCreateCards()
     {
         _imageLoader.LoadImages(_gameSettings.cardFacesJsonUrl, OnLoadingComplete);
     }
 
+    /// <summary>
+    /// Reshuffles cards
+    /// </summary>
     public void ReshuffleCards()
     {
         ShuffleSpritePairs();
@@ -43,6 +59,10 @@ public class CardDeck
         CoroutineRunner.Instance.StartCoroutine(RememberingCards());
     }
 
+    /// <summary>
+    /// Prepares sprite pairs and creates cards
+    /// </summary>
+    /// <param name="sprites"> Sprites to form pairs </param>
     private void OnLoadingComplete(List<Sprite> sprites)
     {
         PrepareSpritePairs(sprites);
@@ -52,6 +72,10 @@ public class CardDeck
         CoroutineRunner.Instance.StartCoroutine(RememberingCards());
     }
 
+    /// <summary>
+    /// Prepares sprite pairs
+    /// </summary>
+    /// <param name="sprites"> Sprites to form pairs </param>
     private void PrepareSpritePairs(List<Sprite> sprites)
     {
         _spritePairs = new List<Sprite>();
@@ -65,6 +89,9 @@ public class CardDeck
         }
     }
 
+    /// <summary>
+    /// Shuffles sprite pairs
+    /// </summary>
     private void ShuffleSpritePairs()
     {
         for (int i = _spritePairs.Count - 1; i > 0; i--)
@@ -77,6 +104,9 @@ public class CardDeck
         }
     }
 
+    /// <summary>
+    /// Creates cards
+    /// </summary>
     private void CreateCards()
     {
         _cards.Clear();
@@ -88,6 +118,10 @@ public class CardDeck
         }
     }
 
+    /// <summary>
+    /// Opens cards and hides them after remembering delay
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator RememberingCards()
 	{
 		foreach (var card in Cards)
@@ -103,6 +137,9 @@ public class CardDeck
 		}
 	}
 
+    /// <summary>
+    /// Adjusts card list after shuffling
+    /// </summary>
     private void AdjustCardListAfterShuffle()
 	{
 		for (int i = 0; i < _cards.Count; i++)
